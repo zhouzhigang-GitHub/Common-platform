@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.platform.sys.modular.system.mapper.UserPosMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.common.platform.sys.modular.system.entity.UserPos">
+        <id column="user_pos_id" property="userPosId" />
+        <result column="user_id" property="userId" />
+        <result column="pos_id" property="posId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_pos_id AS "userPosId",
+        user_id AS "userId",
+        pos_id AS "posId"
+    </sql>
+
+    <select id="customList" resultType="com.common.platform.sys.modular.system.model.result.UserPosResult" parameterType="com.common.platform.sys.modular.system.model.params.UserPosParam">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_user_pos WHERE 1=1
+        <if test="paramCondition.userId!=null and paramCondition.userId!=''">
+            AND user_id = #{paramCondition.userId}
+        </if>
+        <if test="paramCondition.posId!=null and paramCondition.posId!=''">
+            AND pos_id = #{paramCondition.posId}
+        </if>
+    </select>
+
+    <select id="customMapList" resultType="map" parameterType="com.common.platform.sys.modular.system.model.params.UserPosParam">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_user_pos WHERE 1=1
+        <if test="paramCondition.userId!=null and paramCondition.userId!=''">
+            AND user_id = #{paramCondition.userId}
+        </if>
+        <if test="paramCondition.posId!=null and paramCondition.posId!=''">
+            AND pos_id = #{paramCondition.posId}
+        </if>
+    </select>
+
+    <select id="customPageList" resultType="com.common.platform.sys.modular.system.model.result.UserPosResult" parameterType="com.common.platform.sys.modular.system.model.params.UserPosParam">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_user_pos WHERE 1=1
+        <if test="paramCondition.userId!=null and paramCondition.userId!=''">
+            AND user_id = #{paramCondition.userId}
+        </if>
+        <if test="paramCondition.posId!=null and paramCondition.posId!=''">
+            AND pos_id = #{paramCondition.posId}
+        </if>
+    </select>
+
+    <select id="customPageMapList" resultType="map" parameterType="com.common.platform.sys.modular.system.model.params.UserPosParam">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_user_pos WHERE 1=1
+        <if test="paramCondition.userId!=null and paramCondition.userId!=''">
+            AND user_id = #{paramCondition.userId}
+        </if>
+        <if test="paramCondition.posId!=null and paramCondition.posId!=''">
+            AND pos_id = #{paramCondition.posId}
+        </if>
+    </select>
+
+</mapper>

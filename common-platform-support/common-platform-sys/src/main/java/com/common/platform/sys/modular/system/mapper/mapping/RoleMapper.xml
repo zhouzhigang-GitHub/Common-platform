@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.platform.sys.modular.system.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.common.platform.sys.modular.system.entity.Role">
+        <id column="role_id" property="roleId" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="pid" property="pid" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="sort" property="sort" />
+        <result column="version" property="version" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        role_id AS "roleId",
+        pid AS "pid",
+        name AS "name",
+        description AS "description",
+        sort AS "sort",
+        version AS "version",
+        create_time AS "createTime",
+        update_time AS "updateTime",
+        create_user AS "createUser",
+        update_user AS "updateUser"
+    </sql>
+
+    <select id="selectRoles" resultType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        <if test="condition != null">
+            WHERE name LIKE CONCAT('%',#{condition},'%')
+        </if>
+        ORDER BY sort ASC
+    </select>
+
+    <select id="selectRoles" resultType="map" databaseId="oracle">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        <if test="condition != null">
+            WHERE name LIKE '%' || #{condition} || '%'
+        </if>
+        ORDER BY sort ASC
+    </select>
+
+    <delete id="deleteRolesById">
+      DELETE FROM sys_relation WHERE role_id = #{roleId}
+   </delete>
+
+    <select id="roleTreeList" resultType="com.common.platform.base.pojo.tree.node.ZTreeNode">
+      SELECT role_id AS id, pid AS "pId",
+      name AS name, (CASE WHEN (pid = 0 OR pid IS NULL) THEN 'true'
+      ELSE 'false' END ) AS "open" FROM sys_role
+   </select>
+
+    <select id="roleTreeList" resultType="com.common.platform.base.pojo.tree.node.ZTreeNode" databaseId="oracle">
+      SELECT role_id AS id, pid AS "pId",
+      name AS name, (CASE WHEN (pid = 0 OR pid IS NULL) THEN '1'
+      ELSE '0' end) AS "open" from sys_role
+   </select>
+
+    <select id="roleTreeListByRoleId" resultType="com.common.platform.base.pojo.tree.node.ZTreeNode">
+        SELECT
+        r.role_id AS id,
+        pid AS "pId",
+        name AS "name",
+        (CASE WHEN (pid = 0 OR pid IS NULL) THEN 'true' ELSE 'false' END) AS "open",
+        (CASE WHEN (r1.role_id = 0 OR r1.role_id IS NULL) THEN 'false' ELSE 'true' END) AS "checked"
+        FROM sys_role r
+        LEFT JOIN ( SELECT role_id FROM sys_role WHERE role_id IN
+        <foreach collection="array" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+
+        ) r1 ON r.role_id = r1.role_id
+        ORDER BY pid,sort ASC
+    </select>
+
+    <select id="roleTreeListByRoleId" resultType="com.common.platform.base.pojo.tree.node.ZTreeNode" databaseId="oracle">
+        SELECT
+        r.role_id AS id,
+        pid AS "pId",
+        name AS "name",
+        (CASE WHEN (pid = 0 OR pid IS NULL) THEN
+        '1'
+        ELSE
+        '0'
+        END
+        ) AS "open",
+        (CASE WHEN (r1.role_id = 0 OR r1.role_id IS NULL) THEN '0' ELSE '1' END ) AS "checked"
+        FROM sys_role r LEFT JOIN (SELECT role_id FROM sys_role WHERE role_id IN
+        <foreach collection="array" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        ) r1 ON r.role_id = r1.role_id
+        ORDER BY pid,sort ASC
+    </select>
+
+    <select id="listRole" resultType="map">
+        SELECT
+        role_id AS id,
+        name,
+        description
+        FROM sys_role
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name},'%')
+        </if>
+    </select>
+</mapper>
